@@ -1,0 +1,13 @@
+---
+import {extractContent} from "../../utils/utils";
+import {convert} from 'html-to-text'
+import * as console from "node:console";
+const props = Astro.props;
+const html = await Astro.slots.render('default');
+const innerText = convert(html)
+---
+
+<a class="inline-flex justify-center items-center " href={Astro.props.href} target="_blank" rel="noopener noreferrer">
+    {innerText}
+    <i class="i-line-md:external-link"></i>
+</a>

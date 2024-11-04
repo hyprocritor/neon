@@ -1,0 +1,137 @@
+---
+import BaseHead from '../../../components/BaseHead.astro';
+import Header from '../../../components/Header.astro';
+import Footer from '../../../components/Footer.astro';
+import {SITE_TITLE, SITE_DESCRIPTION} from '../../../consts';
+import {getCollection} from 'astro:content';
+import type {GetStaticPaths} from "astro";
+import dayjs from "dayjs"
+import relativeTime from "dayjs/plugin/relativeTime"
+import 'dayjs/locale/zh-cn'
+dayjs.extend(relativeTime)
+dayjs.locale('zh-cn')
+export const getStaticPaths = (async ({paginate}) => {
+    const allPosts = await getCollection('blog');
+    const formattedPosts = allPosts.sort((a, b) => new Date(a.data.pubDate).valueOf() - new Date(b.data.pubDate).valueOf()).reverse();
+    return paginate(formattedPosts, {
+        pageSize: 4,
+    })
+}) satisfies GetStaticPaths;
+const {page} = Astro.props;
+---
+
+<!doctype html>
+<html lang="en" data-overlayscrollbars-initialize>
+<head>
+    <BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION}/>
+</head>
+<body class="dark:bg-gray-900 transition-bg duration-300" data-overlayscrollbars-initialize>
+<Header/>
+<main>
+    <div class="bg-[#4158D0] bg-[linear-gradient(43deg,#4158D0_0%,#C850C0_46%,#FFCC70_100%)] text-transparent bg-clip-text font-800 text-6xl text-center mt-12 mb-8 shadow-pink w-fit mx-auto">
+        归档
+    </div>
+
+    <hr class="mx-auto max-w-6xl"/>
+    <div class="mt-12  max-w-6xl mx-auto rounded-xl flex flex-col gap-6 px-6">
+        {
+            page.data.map((post: any) => (
+                    <a id="post-card"
+                       class="grid grid-rows-2 grid-cols-1 lg:grid-rows-1 lg:grid-cols-3  rounded-xl lg:h-64 max-h-xl max-w-6xl shadow-md hover:shadow-pink hover:shadow-lg transition-all duration-300 dark:text-white overflow-clip shadow-gray dark:shadow-black"
+                       href={`/blog/${post.slug}`}>
+                        <div class="post-thumbnail h-full overflow-clip md:h-64  w-full ">
+                            <img src={post.data.heroImage} alt="" class="object-cover object-cover lg:h-full"/>
+                            <div class="relative bg-gradient-to-r pointer-events-none h-[16rem] top-[-16rem] post-thumbnail-cover"></div>
+                        </div>
+
+                        <div class="py-4 flex flex-col justify-between col-span-2 px-4">
+                            <div>
+
+                                <div class="flex gap-2">
+                                    <div class="bg-amber rounded-lg px-1 py-0.5">
+                                        {post.data.category}
+                                    </div>
+                                    {post.data.tags.map((tag: string) => (
+                                            <div class="inline-block flex items-center justify-center gap-1 hover:color-blue transition-colors duration-200">
+                                                <div class="i-mdi:hashtag color-gray "/>
+                                                {tag}
+                                            </div>
+                                    ))}
+                                </div>
+                                <div class="text-4xl font-700 bg-[linear-gradient(43deg,#4158D0_0%,#C850C0_46%,#FFCC70_100%)] text-transparent bg-clip-text hover:color-blue transition-colors duration-200">
+                                    {post.data.title}
+                                </div>
+
+                                <div class="mt-4">
+                                    {post.data.description}
+                                </div>
+                            </div>
+                            <div class="text-sm font-500 text-gray-400 flex justify-between items-end ">
+                                <div>
+                                    发表于 {dayjs(post.data.pubDate).fromNow()}
+                                </div>
+                                <div class="flex items-center justify-between transition-all duration-400 hover:color-blue">
+                                    阅读更多
+                                    <div class="i-line-md:chevron-double-right animate-paused hover:animate-play "></div>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+
+            ))
+        }
+    </div>
+    <div class="text-center max-w-6xl mt-6 mx-auto flex items-center justify-center gap-8 dark:color-white">
+        {
+            page.currentPage > 1 ?
+                    <a class="flex items-center justify-center border border-amber w-16 h-8 rounded-lg hover:shadow-md hover:shadow-pink hover:shadow-md transition-shadow duration-200 shadow-sm shadow-gray"
+                       href={`/blog/page/${page.currentPage - 1}`}>
+                        <div class="i-material-symbols:arrow-left-alt w-16 h-8"></div>
+                    </a>
+                :
+                    <div class="w-16"/>
+        }
+
+        页面 {page.currentPage} / {page.lastPage}
+        {page.currentPage < page.lastPage ?
+                <a class="flex items-center justify-center border border-amber w-16 h-8 rounded-lg hover:shadow-md hover:shadow-pink hover:shadow-md transition-shadow duration-200 shadow-sm shadow-gray"
+                   href={`/blog/page/${page.currentPage + 1}`}>
+                    <div class="i-material-symbols:arrow-right-alt w-16 h-8"></div>
+                </a> :
+                <div class="w-16"/>
+        }
+    </div>
+
+    <style lang="scss">
+        @media (min-width: 1024px) {
+            .post-thumbnail-cover {
+                background: linear-gradient(90deg,
+                hsla(0, 0%, 98%, 0) 0%,
+                hsla(0, 0%, 98%, .0) 15%,
+                hsla(0, 0%, 98%, .0) 25%,
+                hsla(0, 0%, 98%, .104) 35%,
+                hsla(0, 0%, 98%, .175) 45%,
+                #fff 100%);
+
+
+
+            }
+
+            .dark .post-thumbnail-cover {
+                background: linear-gradient(90deg,
+                hsla(0, 0%, 98%, 0) 0%,
+                hsla(0, 0%, 98%, .0) 15%,
+                hsla(0, 0%, 98%, .0) 25%,
+                hsla(0, 0%, 98%, .104) 35%,
+                hsla(0, 0%, 98%, .175) 45%,
+                #111827 100%);
+
+
+            }
+        }
+    </style>
+
+</main>
+<Footer/>
+</body>
+</html>

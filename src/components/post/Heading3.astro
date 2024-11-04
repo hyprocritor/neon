@@ -1,0 +1,18 @@
+---
+import * as console from "node:console";
+const props = Astro.props;
+---
+<h3 {...props} class="flex items-center gap-1 group left-2 " >
+    <div class="flex items-center heading-wrapper gap-1 ">
+        <a href={`#${props.id}`} class="cursor-pointer color-transparent group-hover:color-green transition-colors duration-200 dark:group-hover:color-white heading-anchor">
+            <div class="i-mdi-link-variant w-[1.5rem] h-[1.5rem]"/>
+        </a>
+        <div class="text-md">
+            <slot/>
+        </div>
+    </div>
+    <div class="headings-underline"/>
+</h3>
+<style>
+
+</style>

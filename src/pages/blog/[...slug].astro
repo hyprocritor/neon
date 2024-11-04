@@ -1,0 +1,163 @@
+---
+import {type CollectionEntry, getCollection} from 'astro:content';
+import BlogPost from '../../layouts/BlogPost.astro';
+import Heading2 from '../../components/post/Heading2.astro';
+import Heading3 from '../../components/post/Heading3.astro';
+import Anchor from '../../components/post/Anchor.astro';
+import Image from '../../components/post/Image.astro';
+
+export async function getStaticPaths() {
+    const posts = await getCollection('blog');
+    return posts.map((post) => ({
+        params: {slug: post.slug},
+        props: post,
+    }));
+}
+type Props = CollectionEntry<'blog'>;
+
+const post = Astro.props;
+const {Content, components, headings} = await post.render();
+---
+
+<BlogPost headings={headings} {...post.data}>
+    <div id="post-body" class=" px-3 lg:px-12  prose dark:prose-invert dark:color-white max-w-full">
+        <Content components={{...components, h2: Heading2, h3: Heading3, a: Anchor, img: Image}}/>
+    </div>
+</BlogPost>
+<style lang="scss" is:global>
+
+
+  #post-body {
+    h2, h3, h4, h5, h6 {
+      text-decoration: none;
+      z-index: 0;
+      display: block;
+    }
+
+    code:not(pre *) {
+      background-color: #FF9A8B;
+      color: #374151;
+      background-image: linear-gradient(90deg, #FF9A8B 0%, #FF6A88 55%, #FF99AC 100%);
+      border-radius: 0.3rem;
+      padding: 2px 7px;
+
+      &:before {
+        content: none;
+      }
+
+      &:after {
+        content: none;
+      }
+    }
+
+    pre {
+      &:before {
+        content: '';
+        height: 3px;
+        width: 100%;
+        background: #FF9A8B;
+      }
+    }
+
+    :not(pre) > code {
+      background-color: #FF9A8B;
+      color: #374151;
+      background-image: linear-gradient(90deg, #FF9A8B 0%, #FF6A88 55%, #FF99AC 100%);
+      border-radius: 0.3rem;
+      padding: 2px 7px;
+
+      &:before {
+        content: none;
+      }
+
+      &:after {
+        content: none;
+      }
+    }
+
+    a {
+      text-underline-offset: 3px;
+      transition: color;
+      transition-duration: 0.2s;
+      &:hover {
+        color: #42b983;
+      }
+    }
+
+    p > a:not(.heading-anchor) {
+
+      font-weight: 600;
+      padding: 0 2px;
+      text-decoration: underline;
+      text-underline-offset: 3px;
+
+
+    }
+
+    em {
+      /*text-emphasis: circle ;*/
+      text-emphasis-position: under;
+      text-emphasis-style: open triangle;
+    }
+
+    hr {
+      height: 2px;
+      padding: 0;
+      margin: 16px 0;
+      background-image: linear-gradient(to right, #f0f0f0, #00b9ff, #59d941, #f0f0f0);
+      border: 0 none;
+      overflow: hidden;
+      box-sizing: content-box;
+    }
+
+
+    blockquote {
+      font-family: "PingFang SC", sans-serif;
+      font-style: normal;
+      border-left: 4px solid #42b983;
+      padding: 10px 15px;
+      background-color: rgba(66, 185, 131, .1);
+    }
+
+    table {
+      width: 100%;
+      display: table;
+    }
+
+    table tr:nth-child(2n),
+    thead {
+      background-color: #dfe2e5;
+    }
+
+
+    table tr th {
+      font-weight: bold;
+      border: 1px solid #dfe2e5;
+      border-bottom: 0;
+      text-align: left;
+      margin: 0;
+      padding: 6px 13px;
+    }
+
+    table tr td {
+      border: 1px solid #dfe2e5;
+      text-align: left;
+      margin: 0;
+      padding: 6px 13px;
+    }
+  }
+
+  .dark {
+    #post-body {
+      table tr:nth-child(2n),
+      thead {
+        background-color: #000;
+      }
+    }
+
+  }
+</style>
+<script is:inline>
+    addIntersectionObserver();
+    addResizeObserver();
+</script>
