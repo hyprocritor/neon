@@ -5,7 +5,7 @@ import Logo from '../assets/logo.svg'
 import ViewTransitions from 'astro/components/ViewTransitions.astro';
 ---
 
-<header class="sticky top-3 px-16 bg-blur site-header header-up">
+<header class="sticky px-16 bg-blur site-header">
     <nav class="flex justify-between shadow-2xl h-14 px-3 items-center rounded-xl bg-zinc-100 mx-auto dark:bg-gray-800 transition-colors duration-500 border-b-blueGray dark:shadow-amber shadow-green transition-shadow z-10">
         <div class="flex items-center gap-sm pl-6">
             <img src={Logo.src} class="h-8" alt=""/>
@@ -55,54 +55,38 @@ import ViewTransitions from 'astro/components/ViewTransitions.astro';
     }
 
     .site-header {
-        transition: top 0.2s ease-in-out;
+        top: 0.75rem;
+        transition: top 0.4s ease-in-out;
+
         .header-down {
 
         }
+
         &.header-up {
             top: -100px;
         }
     }
 </style>
 <script is:inline>
-    let didScroll;
     let lastScrollTop = 0;
-    const delta = 5;
-    const navbar = document.querySelector('.site-header');
-    const navbarHeight = navbar.offsetHeight;
-
-    function hasScrolled() {
-        const st = window.scrollY;
-
-        // Make sure they scroll more than delta
-        if (Math.abs(lastScrollTop - st) <= delta) return;
-
-        // If they scrolled down and are past the navbar, add class .nav-up.
-        if (st > lastScrollTop && st > navbarHeight) {
-            // Scroll Down
-            navbar.classList.remove('header-down');
-            navbar.classList.add('header-up');
-        } else {
-            // Scroll Up
-            if (st + window.innerHeight < document.documentElement.scrollHeight) {
-                navbar.classList.remove('header-up');
-                navbar.classList.add('header-down');
-            }
-        }
-
-        lastScrollTop = st;
-    }
-
     document.addEventListener('astro:page-load', () => {
-        window.addEventListener('scroll', function () {
-            didScroll = true;
-        });
-        setInterval(function () {
-            if (didScroll) {
-                hasScrolled();
-                didScroll = false;
+        const delta = 15;
+        const header = document.querySelector(".site-header");
+        window.addEventListener("scroll", function () {
+            const st = window.scrollY;
+
+            if (Math.abs(lastScrollTop - st) <= delta) return;
+
+            if (st > lastScrollTop && lastScrollTop > 0) {
+                // downscroll code
+                header.classList.add("header-up");
+            } else {
+                // upscroll code
+                header.classList.remove("header-up");
             }
-        }, 250);
+
+            lastScrollTop = st;
+        });
     });
 
 </script>

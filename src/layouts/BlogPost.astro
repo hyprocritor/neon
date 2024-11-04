@@ -123,7 +123,6 @@ const {title, description, pubDate, updatedDate, heroImage, headings} = Astro.pr
                 // Set linkEnd to the bottom of the furthest active link
                 linkEnd = Math.max(linkEnd, linkEnds.get(link));
             });
-            console.log(linkStart, linkEnd)
             // If there are no active links, hide the path
             path.style.display = activeLinks.length ? "inline" : "none";
             // FINALLY, do the thing!
