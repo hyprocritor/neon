@@ -7,7 +7,7 @@ import FormattedDate from '../components/FormattedDate.astro';
 import {slide} from 'astro:transitions';
 import TableOfContents from "../components/TableOfContents.astro";
 type Props = CollectionEntry<'blog'>['data'];
-const {title, description, pubDate, updatedDate, heroImage, headings} = Astro.props;
+const {title, description, pubDate, updatedDate, heroImage, headings,remarkPluginFrontmatter} = Astro.props;
 ---
 
 <html lang="zh-Hans">
@@ -152,6 +152,7 @@ const {title, description, pubDate, updatedDate, heroImage, headings} = Astro.pr
                         <h1 class="text-4xl mx-auto w-fit text-center text-transparent font-800 dark:bg-amber bg-clip-text bg-[#FF3CAC] bg-[linear-gradient(225deg,#FF3CAC_0%,#784BA0_50%,#2B86C5_100%)]">{title}</h1>
                         <div class="flex items-center justify-center">
                             <FormattedDate date={pubDate} classes="dark:text-white text-center w-full"/>
+                            {JSON.stringify(remarkPluginFrontmatter)} 分钟
                         </div>
                     </div>
                 </div>
