@@ -28,7 +28,7 @@ const {page} = Astro.props;
 <body class="dark:bg-gray-900 transition-bg duration-300" data-overlayscrollbars-initialize>
 <Header/>
 <main>
-    <div class="bg-[#4158D0] bg-[linear-gradient(43deg,#4158D0_0%,#C850C0_46%,#FFCC70_100%)] text-transparent bg-clip-text font-800 text-6xl text-center mt-12 mb-8 shadow-pink w-fit mx-auto">
+    <div class="bg-[#4158D0] bg-[linear-gradient(43deg,#4158D0_0%,#C850C0_46%,#FFCC70_100%)] text-transparent bg-clip-text font-800 text-6xl text-center mt-12 mb-8 shadow-pink w-fit mx-auto drop-shadow">
         归档
     </div>
 
@@ -44,11 +44,10 @@ const {page} = Astro.props;
                             <div class="relative bg-gradient-to-r pointer-events-none h-[16rem] top-[-16rem] post-thumbnail-cover"></div>
                         </div>
 
-                        <div class="py-4 flex flex-col justify-between col-span-2 px-4">
+                        <div class="py-4 flex flex-col justify-between col-span-2 px-4 drop-shadow">
                             <div>
-
                                 <div class="flex gap-2">
-                                    <div class="bg-amber rounded-lg px-1 py-0.5">
+                                    <div class="c-rose-600 font-500 rounded-md px-[2px]  border border-rose-600">
                                         {post.data.category}
                                     </div>
                                     {post.data.tags.map((tag: string) => (
