@@ -159,9 +159,9 @@ const {
 <body class="dark:bg-gray-900 transition-bg duration-300">
 <Header/>
 <main>
-    <div class="flex mx-auto md:px-8 px-5 items-start">
+    <div class="flex mx-auto md:px-8 px-5 items-start justify-center">
         <TableOfContents toc={headings}/>
-        <div class="md:pr-[2.2rem] w-full">
+        <div class="w-6xl">
             <article
                     class="mt-12 w-full md:w-fit mr-3 lg:mx-auto rounded-xl pb-2 shadow-lg shadow-blue dark:shadow-pink border dark:border-dark w-6xl drop-shadow"
                     data-overlayscrollbars-initialize
@@ -211,6 +211,7 @@ const {
                 <slot/>
             </article>
         </div>
+        <div class="w-[300px] h-[1px]"/>
     </div>
 </main>
 <Footer/>
