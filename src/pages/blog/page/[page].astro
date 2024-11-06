@@ -38,7 +38,7 @@ const {page} = Astro.props;
         {
             page.data.map((post: any) => (
                     <div
-                         class="grid grid-rows-2 grid-cols-1 lg:grid-rows-1 lg:grid-cols-3 rounded-lg lg:h-64 max-h-xl max-w-6xl border hover:shadow-pink hover:shadow-lg transition-colors duration-300 dark:text-white overflow-clip shadow-gray dark:shadow-black"
+                         class="grid grid-rows-2 grid-cols-1 lg:grid-rows-1 lg:grid-cols-3  lg:gap-6 rounded-lg lg:h-[13rem] max-h-lg max-w-6xl border hover:shadow-pink hover:shadow-lg transition-colors duration-300 dark:text-white overflow-clip transition-shadow duration-200 shadow-gray dark:shadow-black"
                     >
                         <div class="post-thumbnail h-full overflow-clip md:h-64  w-full ">
                             <img src={post.data.heroImage} alt="" class="object-cover object-cover lg:h-full"/>
@@ -136,6 +136,7 @@ const {page} = Astro.props;
 
         }
       }
+
     </style>
 
 </main>
