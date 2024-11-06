@@ -134,7 +134,8 @@ const {
 
         function updatePath() {
             const path = document.querySelector("path.toc-marker");
-            const pathLength = path?.getTotalLength();
+            if (path === null) return;
+            const pathLength = path.getTotalLength();
             const activeLinks =
                 document.querySelectorAll("nav.toc a.active");
             let linkStart = pathLength;
@@ -176,7 +177,7 @@ const {
                             class="pt-16 flex-col space-y-lg h-full text-center flex justify-center items-center"
                     >
                         <h1
-                                class="text-4xl mx-auto w-fit text-center text-transparent font-800 dark:bg-amber bg-clip-text bg-[#FF3CAC] bg-[linear-gradient(225deg,#FF3CAC_0%,#784BA0_50%,#2B86C5_100%)] drop-shadow drop-shadow-color-white">
+                                class="text-4xl mx-auto w-fit text-center text-white font-800 dark:bg-amber  drop-shadow drop-shadow-color-dark">
                             {title}
                         </h1>
                         <div class="flex items-center justify-center gap-2 drop-shadow color-white drop-shadow-color-black">

@@ -70,8 +70,9 @@ import ViewTransitions from 'astro/components/ViewTransitions.astro';
 <script is:inline>
     let lastScrollTop = 0;
     const delta = 15;
-    const header = document.querySelector(".site-header");
+    let header = document.querySelector(".site-header");
     document.addEventListener('astro:page-load', () => {
+        header = document.querySelector(".site-header");
         window.addEventListener("scroll", function () {
             const st = window.scrollY;
 
