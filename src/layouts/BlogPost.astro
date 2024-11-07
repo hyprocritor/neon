@@ -7,9 +7,12 @@ import Footer from "../components/Footer.astro";
 import FormattedDate from "../components/FormattedDate.astro";
 import {slide} from "astro:transitions";
 import TableOfContents from "../components/TableOfContents.astro";
+import {Image} from "astro:assets";
+import BackgroundImage from '../assets/background.webp'
 type Props = CollectionEntry<"blog">["data"] & {
     headings: any
     remarkPluginFrontmatter: any
+    slug:string
 }
 const {
     title,
@@ -18,6 +21,9 @@ const {
     updatedDate,
     heroImage,
     headings,
+    category,
+    tags,
+    slug,
     remarkPluginFrontmatter,
 } = Astro.props;
 ---
@@ -32,159 +38,39 @@ const {
             type="text/css"
             media="screen"
     />
-    <script is:inline>
-        // bottom of each link
-        let linkStarts = new WeakMap();
-        let linkEnds = new WeakMap();
-
-        function addIntersectionObserver() {
-            const observer = new IntersectionObserver((sections) => {
-                sections.forEach((section) => {
-                    const heading =
-                        section.target.querySelector("h2, h3, h4, h5");
-                    if (!heading) return;
-                    const id = heading.getAttribute("id");
-
-                    // Get the link to this section's heading
-                    const link = document.querySelector(
-                        `nav.toc li a[href="#${id}"]`,
-                    );
-                    if (!link) return;
-
-                    // Add/remove the .active class based on whether the
-                    // section is visible
-                    const addRemove =
-                        section.intersectionRatio > 0 ? "add" : "remove";
-                    link.classList[addRemove]("active");
-                });
-                updatePath();
-            });
-
-            // Observe all the sections of the article
-            document
-                .querySelectorAll("article section")
-                .forEach((section) => {
-                    observer.observe(section);
-                });
-        }
-
-        function addResizeObserver() {
-            if (!document.querySelector("nav.toc")) return;
-            const observer = new ResizeObserver(() => {
-                drawPath();
-                updatePath();
-            });
-            observer.observe(document.querySelector("nav.toc"));
-        }
-
-        function drawPath() {
-            const path = document.querySelector("path.toc-marker");
-            const links = Array.from(
-                document.querySelectorAll("nav.toc a"),
-            );
-            if (!links.length) return;
-
-            // Start with an empty array of path data values (joined with
-            // spaces later)
-            let pathData = [];
-            let left = 0; // The last x position / indentation
-
-            // Iterate over each link to build up the pathData
-            links.forEach((link, i) => {
-                const x = link.offsetLeft;
-                const y = link.offsetTop;
-                const height = link.offsetHeight;
-                if (i === 0) {
-                    // The top of the first link starts at 0px along the path.
-                    linkStarts.set(link, 0);
-                    // Like drawing with a pen...
-                    // 'M'ove to the top left of the first link,
-                    // and then draw a 'L'ine to the bottom left
-                    pathData.push("M", x, y, "L", x, y + height);
-                } else {
-                    // If the current link is indented differently than the last,
-                    // then come down to the current link's top before moving
-                    // left or right. This ensures we get 90-degrees angle at the
-                    // corners.
-                    if (left !== x) pathData.push("L", left, y);
-
-                    // Draw a line to the top left of the current link
-                    pathData.push("L", x, y);
-
-                    // Apply the current path data to the path element
-                    path.setAttribute("d", pathData.join(" "));
-
-                    // Get the total length of the path now that it extends
-                    // to the top of this link, and store it in our linkStarts
-                    // WeakMap.
-                    linkStarts.set(link, path?.getTotalLength());
-
-                    // Draw a line to the bottom left of the current link
-                    pathData.push("L", x, y + height);
-                }
-
-                // Save the current link's x position to compare with the next
-                // link
-                left = x;
-
-                // Apply the current path data to the path element again
-                path.setAttribute("d", pathData.join(" "));
-
-                // Get the length of the path that now extends to the
-                // bottom of this link, and store it in our linkEnds WeakMap.
-                linkEnds.set(link, path?.getTotalLength());
-            });
-        }
-
-        function updatePath() {
-            const path = document.querySelector("path.toc-marker");
-            if (path === null) return;
-            const pathLength = path.getTotalLength();
-            const activeLinks =
-                document.querySelectorAll("nav.toc a.active");
-            let linkStart = pathLength;
-            let linkEnd = 0;
-            activeLinks.forEach((link) => {
-                // Set linkStart to the top of the earliest active link
-                linkStart = Math.min(linkStart, linkStarts.get(link));
-                // Set linkEnd to the bottom of the furthest active link
-                linkEnd = Math.max(linkEnd, linkEnds.get(link));
-            });
-            // If there are no active links, hide the path
-            path.style.display = activeLinks.length ? "inline" : "none";
-            // FINALLY, do the thing!
-            path.setAttribute(
-                "stroke-dasharray",
-                `1 ${linkStart} ${linkEnd - linkStart} ${pathLength}`,
-            );
-        }
-    </script>
 </head>
-<body class="dark:bg-gray-900 transition-bg duration-300">
+<body class="dark:bg-gray-900 transition-bg duration-300" data-overlayscrollbars-initialize>
 <Header/>
-<main>
-    <div class="flex mx-auto md:px-8 px-5 items-start justify-center">
-        <TableOfContents toc={headings}/>
+<div class="absolute z-[-1]" transition:persist transition:name="bannerImage">
+    <Image src={BackgroundImage} alt="A description of my image." decoding="async" loading="lazy"/>
+</div>
+<main style="top:calc(35vh - 3.5rem)" data-overlayscrollbars-initialize class="relative">
+    <div class="flex mx-auto md:px-8 px-5 items-start justify-center relative">
+        <div class="w-[300px] h-[1px] hidden md:block relative">
+        </div>
         <div class="w-full max-w-6xl">
             <article
-                    class="mt-12 w-full md:w-fit mr-3 lg:mx-auto rounded-xl pb-2 shadow-lg shadow-blue dark:shadow-pink border dark:border-dark w-6xl drop-shadow relative"
-                    data-overlayscrollbars-initialize
+                    class="mt-12 w-full md:w-fit mr-3 lg:mx-auto rounded-xl pb-2 shadow-lg shadow-blue dark:shadow-pink border dark:border-dark w-6xl drop-shadow relative onload-animation bg-white dark:bg-dark"
             >
-    
-                <div
-                        class="h-md bg-no-repeat bg-cover bg-center"
-                >
                     <div
-                            class="pt-16 flex-col space-y-lg h-full text-center flex justify-center items-center"
-                    >
-                    <img src={heroImage} class="absolute h-md w-full object-fill top-0" transition:name={heroImage}/>
+                            class="pt-16 flex-col gap-6 h-full flex  flex-col justify-center items-center dark:color-white">
+                        <div class="flex gap-2 ">
+                            <div class="flex items-center gap-1">
+                                <div class="i-material-symbols:book-2-outline color-red"></div>
+                                {category}
+                            </div>
+                            {tags.map((tag) => (
+                                    <div class="flex items-center justify-center gap-1"
+                                    ><div class="i-material-symbols:tag color-gray"/>{tag}</div>
+                            ))}
+                        </div>
                         <h1
-                                class="text-4xl mx-auto w-fit text-center text-white font-800  drop-shadow drop-shadow-color-dark">
+                                class="text-4xl w-fit font-800 drop-shadow  bg-[linear-gradient(to_bottom_right,#FF61D2,#FE9090)] bg-clip-text text-transparent" >
                             {title}
                         </h1>
-                        <div class="flex items-center justify-center gap-2 drop-shadow color-white drop-shadow-color-black">
+                        <div class="flex items-center justify-center gap-2 drop-shadow dark:color-white">
                             <div class='w-full whitespace-pre flex items-center'>
-                                <div class="i-material-symbols:date-range"></div>
+                                <div class="i-material-symbols:calendar-today-outline whitespace-normal"></div>
                                 {new Date(pubDate).toLocaleString("zh-cn", {
                                     year: "numeric",
                                     month: "long",
@@ -192,7 +78,7 @@ const {
                                 }).trim()}
                             </div>
                             <div class="flex w-full items-center justify-center whitespace-pre">
-                                <div class="i-mdi:text-shadow">
+                                <div class="i-mdi:text">
                                 </div>
                                 {
                                     remarkPluginFrontmatter.readingTime
@@ -201,20 +87,28 @@ const {
                             </div>
 
                             <div class="flex w-full items-center justify-center whitespace-pre">
-                                <div class="i-mdi:clock"></div>
+                                <div class="i-mdi:clock-outline"></div>
                                 {
                                     remarkPluginFrontmatter.readingTime
                                         .minutes
                                 } 分钟
                             </div>
+
+
+                        </div>
+                        <div class="px-6 rounded-xl w-full">
+                            <img src={heroImage} class=" h-md object-cover w-full rounded-xl" />
                         </div>
                     </div>
-                </div>
                 <slot/>
+
             </article>
+
         </div>
-        <div class="w-[300px] h-[1px] hidden md:block"/>
+
+        <TableOfContents toc={headings}/>
     </div>
+
 </main>
 <Footer/>
 </body>

@@ -21,6 +21,7 @@ function buildToc(headings) {
 }
 const toc = buildToc(Astro.props.toc);
 ---
+
 <nav class="toc">
     <ul>
         {toc.map((heading) =>
@@ -38,20 +39,26 @@ const toc = buildToc(Astro.props.toc);
                 stroke-linejoin="round"
         ></path>
     </svg>
+
+
 </nav>
+<div class="sticky static bottom-10 w-12 h-12">
+    <div class="   bg-amber"></div>
+</div>
 <style is:global lang="scss">
   .toc {
     display: none;
   }
-  @media (min-width: 1024px) {
 
+  @media (min-width: 1024px) {
     .dark {
       nav.toc {
         a {
           color: #fff;
         }
       }
-      svg.toc-progress { 
+
+      svg.toc-progress {
         color: #fff
       }
     }
@@ -61,7 +68,7 @@ const toc = buildToc(Astro.props.toc);
       top: 8rem;
       min-width: 300px;
       width: 300px;
-
+        margin-top: 40rem;
       ul {
         list-style-type: none;
         padding-left: 2.2rem;

@@ -45,3 +45,246 @@ const { title, description, image = '/blog-placeholder-1.jpg' } = Astro.props;
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/overlayscrollbars/2.10.0/styles/overlayscrollbars.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
 <script src="https://cdnjs.cloudflare.com/ajax/libs/overlayscrollbars/2.10.0/browser/overlayscrollbars.browser.es6.min.js"  crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <ViewTransitions/>
+<style is:global>
+    @keyframes fade-in-up {
+        0% {
+            transform: translateY(2rem);
+            opacity: 0
+        }
+
+        to {
+            transform: translateY(0);
+            opacity: 1
+        }
+    }
+
+    .onload-animation {
+        opacity: 0;
+        animation: .3s fade-in-up;
+        animation-fill-mode: forwards
+    }
+</style>
+<script is:inline>
+    // bottom of each link
+    let linkStarts = new WeakMap();
+    let linkEnds = new WeakMap();
+
+    function addIntersectionObserver() {
+        const observer = new IntersectionObserver((sections) => {
+            sections.forEach((section) => {
+                const heading =
+                    section.target.querySelector("h2, h3, h4, h5");
+                if (!heading) return;
+                const id = heading.getAttribute("id");
+
+                // Get the link to this section's heading
+                const link = document.querySelector(
+                    `nav.toc li a[href="#${id}"]`,
+                );
+                if (!link) return;
+
+                // Add/remove the .active class based on whether the
+                // section is visible
+                const addRemove =
+                    section.intersectionRatio > 0 ? "add" : "remove";
+                link.classList[addRemove]("active");
+            });
+            updatePath();
+        });
+
+        // Observe all the sections of the article
+        document
+            .querySelectorAll("article section")
+            .forEach((section) => {
+                observer.observe(section);
+            });
+    }
+
+    function addResizeObserver() {
+        if (!document.querySelector("nav.toc")) return;
+        const observer = new ResizeObserver(() => {
+            drawPath();
+            updatePath();
+        });
+        observer.observe(document.querySelector("nav.toc"));
+    }
+
+    function drawPath() {
+        const path = document.querySelector("path.toc-marker");
+        const links = Array.from(
+            document.querySelectorAll("nav.toc a"),
+        );
+        if (!links.length) return;
+
+        // Start with an empty array of path data values (joined with
+        // spaces later)
+        let pathData = [];
+        let left = 0; // The last x position / indentation
+
+        // Iterate over each link to build up the pathData
+        links.forEach((link, i) => {
+            const x = link.offsetLeft;
+            const y = link.offsetTop;
+            const height = link.offsetHeight;
+            if (i === 0) {
+                // The top of the first link starts at 0px along the path.
+                linkStarts.set(link, 0);
+                // Like drawing with a pen...
+                // 'M'ove to the top left of the first link,
+                // and then draw a 'L'ine to the bottom left
+                pathData.push("M", x, y, "L", x, y + height);
+            } else {
+                // If the current link is indented differently than the last,
+                // then come down to the current link's top before moving
+                // left or right. This ensures we get 90-degrees angle at the
+                // corners.
+                if (left !== x) pathData.push("L", left, y);
+
+                // Draw a line to the top left of the current link
+                pathData.push("L", x, y);
+
+                // Apply the current path data to the path element
+                path.setAttribute("d", pathData.join(" "));
+
+                // Get the total length of the path now that it extends
+                // to the top of this link, and store it in our linkStarts
+                // WeakMap.
+                linkStarts.set(link, path?.getTotalLength());
+
+                // Draw a line to the bottom left of the current link
+                pathData.push("L", x, y + height);
+            }
+
+            // Save the current link's x position to compare with the next
+            // link
+            left = x;
+
+            // Apply the current path data to the path element again
+            path.setAttribute("d", pathData.join(" "));
+
+            // Get the length of the path that now extends to the
+            // bottom of this link, and store it in our linkEnds WeakMap.
+            linkEnds.set(link, path?.getTotalLength());
+        });
+    }
+
+    function updatePath() {
+        const path = document.querySelector("path.toc-marker");
+        if (path === null) return;
+        const pathLength = path.getTotalLength();
+        const activeLinks =
+            document.querySelectorAll("nav.toc a.active");
+        let linkStart = pathLength;
+        let linkEnd = 0;
+        activeLinks.forEach((link) => {
+            // Set linkStart to the top of the earliest active link
+            linkStart = Math.min(linkStart, linkStarts.get(link));
+            // Set linkEnd to the bottom of the furthest active link
+            linkEnd = Math.max(linkEnd, linkEnds.get(link));
+        });
+        // If there are no active links, hide the path
+        path.style.display = activeLinks.length ? "inline" : "none";
+        // FINALLY, do the thing!
+        path.setAttribute(
+            "stroke-dasharray",
+            `1 ${linkStart} ${linkEnd - linkStart} ${pathLength}`,
+        );
+    }
+
+    function backToTop(){
+        window.scrollTo(0,0);
+    }
+</script>
+
+<script is:inline>
+    let lastScrollTop = 0;
+    const delta = 15;
+    let header = document.querySelector(".site-header");
+    document.addEventListener('astro:page-load', () => {
+        header = document.querySelector(".site-header");
+        window.addEventListener("scroll", function () {
+            const st = window.scrollY;
+
+            if (Math.abs(lastScrollTop - st) <= delta) return;
+
+            if (st > lastScrollTop && lastScrollTop > 0) {
+                // downscroll code
+                header.classList.add("header-up");
+            } else {
+                // upscroll code
+                header.classList.remove("header-up");
+            }
+
+            lastScrollTop = st;
+        });
+    });
+
+</script>
+<script is:inline>
+    document.addEventListener('astro:page-load', () => {
+        const theme = (() => {
+            if (typeof localStorage !== 'undefined' && localStorage.getItem('theme')) {
+                return localStorage.getItem('theme');
+            }
+            if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                return 'dark';
+            }
+            return 'light';
+        })();
+
+        if (theme === 'light') {
+            document.documentElement.classList.remove('dark');
+        } else {
+            document.documentElement.classList.add('dark');
+        }
+
+        window.localStorage.setItem('theme', theme);
+
+        const handleToggleClick = (event) => {
+            console.log("clicked")
+            const element = document.documentElement;
+            element.classList.toggle("dark");
+
+            const isDark = element.classList.contains("dark");
+            localStorage.setItem("theme", isDark ? "dark" : "light");
+        }
+
+        document.getElementById("themeToggle").addEventListener("click", handleToggleClick);
+    })
+</script>
+
+
+<script is:inline>
+    const {OverlayScrollbars, ClickScrollPlugin} = OverlayScrollbarsGlobal;
+
+    // optional: use the ClickScrollPlugin to make the option "scrollbars.clickScroll: true" available
+    OverlayScrollbars.plugin(ClickScrollPlugin);
+
+    OverlayScrollbars(document.body, {
+        scrollbars: {
+            clickScroll: true,
+        },
+    })
+    document.addEventListener('astro:after-swap', () => {
+        const {OverlayScrollbars, ClickScrollPlugin} = OverlayScrollbarsGlobal;
+        // optional: use the ClickScrollPlugin to make the option "scrollbars.clickScroll: true" available
+        OverlayScrollbars.plugin(ClickScrollPlugin);
+
+        OverlayScrollbars(document.body, {
+            scrollbars: {
+                clickScroll: true,
+            },
+        });
+    })
+</script>
+
+<script is:inline>
+    function applyTheme() {
+        localStorage.theme === 'dark'
+            ? document.documentElement.classList.add("dark")
+            : document.documentElement.classList.remove("dark");
+    }
+
+    document.addEventListener('astro:after-swap', applyTheme);
+    applyTheme();
+</script>
