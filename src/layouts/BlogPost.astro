@@ -1,4 +1,5 @@
 ---
+
 import type {CollectionEntry} from "astro:content";
 import BaseHead from "../components/BaseHead.astro";
 import Header from "../components/Header.astro";
@@ -6,7 +7,10 @@ import Footer from "../components/Footer.astro";
 import FormattedDate from "../components/FormattedDate.astro";
 import {slide} from "astro:transitions";
 import TableOfContents from "../components/TableOfContents.astro";
-type Props = CollectionEntry<"blog">["data"];
+type Props = CollectionEntry<"blog">["data"] & {
+    headings: any
+    remarkPluginFrontmatter: any
+}
 const {
     title,
     description,
@@ -163,19 +167,17 @@ const {
         <TableOfContents toc={headings}/>
         <div class="w-full max-w-6xl">
             <article
-                    class="mt-12 w-full md:w-fit mr-3 lg:mx-auto rounded-xl pb-2 shadow-lg shadow-blue dark:shadow-pink border dark:border-dark w-6xl drop-shadow"
+                    class="mt-12 w-full md:w-fit mr-3 lg:mx-auto rounded-xl pb-2 shadow-lg shadow-blue dark:shadow-pink border dark:border-dark w-6xl drop-shadow relative"
                     data-overlayscrollbars-initialize
             >
-                <!--<div id="hero-image-container" class=`max-w-6xl mx-auto p-2 h-md  bg-no-repeat bg-cover rounded-t-lg`-->
-                <!--     style=`background-image: url(${heroImage});`>-->
-                <!--</div>-->
+    
                 <div
                         class="h-md bg-no-repeat bg-cover bg-center"
-                        style=`background-image: url(${heroImage});`
                 >
                     <div
                             class="pt-16 flex-col space-y-lg h-full text-center flex justify-center items-center"
                     >
+                    <img src={heroImage} class="absolute h-md w-full object-fill top-0" transition:name={heroImage}/>
                         <h1
                                 class="text-4xl mx-auto w-fit text-center text-white font-800  drop-shadow drop-shadow-color-dark">
                             {title}
