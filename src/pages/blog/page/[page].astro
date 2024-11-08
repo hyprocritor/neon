@@ -5,6 +5,7 @@ import Footer from '../../../components/Footer.astro';
 import {SITE_TITLE, SITE_DESCRIPTION, AUTHOR_NAME} from '../../../consts';
 import {getCollection} from 'astro:content';
 import type {GetStaticPaths} from "astro";
+import MainLayout from '../../../layouts/MainLayout.astro'
 import dayjs from "dayjs"
 import relativeTime from "dayjs/plugin/relativeTime"
 import 'dayjs/locale/zh-cn'
@@ -24,22 +25,8 @@ const {page} = Astro.props;
 ---
 
 <!doctype html>
-<html lang="en">
-<head>
-    <BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION}/>
-</head>
-<body class="dark:bg-gray-900 transition-bg duration-300" data-overlayscrollbars-initialize>
-<Header/>
-<div class="absolute z-[-1]" transition:persist transition:name="bannerImage">
-    <Image src={BackgroundImage} alt="A description of my image." decoding="async" loading="lazy"/>
-</div>
-<main style="top:calc(35vh - 3.5rem)"  class="relative">
-    <div class="transition mx-auto duration-700 gap-4 grid grid-cols-[17.5rem_auto] grid-rows-[auto_1fr_auto] left-0 lg:grid-rows-[auto] md:px-4 px-0 right-0 w-fit " >
-        <div class="mt-12">
-            <div class="border w-64 h-64 rounded-xl overflow-clip">
-                <img src={AVATAR_LINK}/>
-            </div>
-        </div>
+<MainLayout title={SITE_TITLE} description={SITE_DESCRIPTION}>
+<main>
         <div class="max-w-6xl">
             <div class="mt-12  mx-auto rounded-lg flex flex-col flex-wrap gap-6 onload-animation animate-delay-500">
                 {
@@ -124,7 +111,6 @@ const {page} = Astro.props;
             </div>
         </div>
 
-    </div>
     <style lang="scss">
       @media (min-width: 1024px) {
         .post-thumbnail-cover {
@@ -155,6 +141,4 @@ const {page} = Astro.props;
     </style>
 
 </main>
-<Footer/>
-</body>
-</html>
+</MainLayout>

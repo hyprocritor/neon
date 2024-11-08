@@ -1,0 +1,46 @@
+---
+import {ViewTransitions} from "astro:transitions";
+interface Props {
+    title: string;
+    description: string;
+}
+import Header from "../components/Header.astro";
+import BaseHead from "../components/BaseHead.astro";
+import {Image} from "astro:assets";
+import Footer from "../components/Footer.astro";
+import BackgroundImage from "../assets/background.webp";
+import {AVATAR_LINK} from "../consts";
+const {title, description} = Astro.props;
+---
+<html lang="zh-Hans">
+<head>
+    <BaseHead title={title} description={description}/>
+    <!--<link rel="stylesheet" href="//unpkg.com/heti/umd/heti.min.css">-->
+    <link
+            rel="stylesheet"
+            href="/js/venobox.min.css"
+            type="text/css"
+            media="screen"
+    />
+    <ViewTransitions/>
+</head>
+<body class="dark:bg-gray-900 transition-bg duration-300" data-overlayscrollbars-initialize>
+<Header/>
+<div class="h-[40vh] transition-all duration-300 transition absolute inset-0 dark:bg-black/10 bg-opacity-50 pointer-events-none overflow-clip z-[-1]">
+    <Image src={BackgroundImage} alt="A description of my image." transition:persist="banner"
+           class="transition-all duration-300"/>
+</div>
+<div id="content-wrapper">
+    <div class="transition mx-auto duration-700 gap-4 grid grid-cols-[17.5rem_auto] grid-rows-[auto_1fr_auto] left-0 lg:grid-rows-[auto] md:px-4 px-0 right-0 w-fit ">
+        <div class="mt-12">
+            <div class="border w-64 h-64 rounded-xl overflow-clip">
+                <img src={AVATAR_LINK}/>
+            </div>
+        </div>
+        <slot/>
+    </div>
+
+</div>
+<Footer/>
+</body>
+</html>

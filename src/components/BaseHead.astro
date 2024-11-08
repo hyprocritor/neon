@@ -44,7 +44,7 @@ const { title, description, image = '/blog-placeholder-1.jpg' } = Astro.props;
 <meta property="twitter:image" content={new URL(image, Astro.url)} />
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/overlayscrollbars/2.10.0/styles/overlayscrollbars.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
 <script src="https://cdnjs.cloudflare.com/ajax/libs/overlayscrollbars/2.10.0/browser/overlayscrollbars.browser.es6.min.js"  crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-<ViewTransitions/>
+
 <style is:global>
     @keyframes fade-in-up {
         0% {
@@ -255,17 +255,8 @@ const { title, description, image = '/blog-placeholder-1.jpg' } = Astro.props;
 
 
 <script is:inline>
-    const {OverlayScrollbars, ClickScrollPlugin} = OverlayScrollbarsGlobal;
 
-    // optional: use the ClickScrollPlugin to make the option "scrollbars.clickScroll: true" available
-    OverlayScrollbars.plugin(ClickScrollPlugin);
-
-    OverlayScrollbars(document.body, {
-        scrollbars: {
-            clickScroll: true,
-        },
-    })
-    document.addEventListener('astro:after-swap', () => {
+    document.addEventListener('astro:page-load', () => {
         const {OverlayScrollbars, ClickScrollPlugin} = OverlayScrollbarsGlobal;
         // optional: use the ClickScrollPlugin to make the option "scrollbars.clickScroll: true" available
         OverlayScrollbars.plugin(ClickScrollPlugin);

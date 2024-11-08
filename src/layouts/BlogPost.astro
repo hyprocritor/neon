@@ -1,5 +1,4 @@
 ---
-
 import type {CollectionEntry} from "astro:content";
 import BaseHead from "../components/BaseHead.astro";
 import Header from "../components/Header.astro";
@@ -8,12 +7,13 @@ import FormattedDate from "../components/FormattedDate.astro";
 import {slide} from "astro:transitions";
 import TableOfContents from "../components/TableOfContents.astro";
 import {Image} from "astro:assets";
-import BackgroundImage from '../assets/background.webp'
+import MainLayout from "./MainLayout.astro";
 type Props = CollectionEntry<"blog">["data"] & {
     headings: any
     remarkPluginFrontmatter: any
-    slug:string
+    slug: string
 }
+
 const {
     title,
     description,
@@ -28,91 +28,72 @@ const {
 } = Astro.props;
 ---
 
-<html lang="zh-Hans">
-<head>
-    <BaseHead title={title} description={description}/>
-    <!--<link rel="stylesheet" href="//unpkg.com/heti/umd/heti.min.css">-->
-    <link
-            rel="stylesheet"
-            href="/js/venobox.min.css"
-            type="text/css"
-            media="screen"
-    />
-</head>
-<body class="dark:bg-gray-900 transition-bg duration-300" data-overlayscrollbars-initialize>
-<Header/>
-<div class="absolute z-[-1]" transition:persist transition:name="bannerImage">
-    <Image src={BackgroundImage} alt="A description of my image." decoding="async" loading="lazy"/>
-</div>
-<main style="top:calc(35vh - 3.5rem)" data-overlayscrollbars-initialize class="relative">
-    <div class="flex mx-auto md:px-8 px-5 items-start justify-center relative">
-        <div class="w-[300px] h-[1px] hidden md:block relative">
-        </div>
-        <div class="w-full max-w-6xl">
+
+<MainLayout title={title} description={description}>
+    <div class="flex mx-auto  items-start justify-center relative">
+        <div class="w-full max-w-4xl">
             <article
-                    class="mt-12 w-full md:w-fit mr-3 lg:mx-auto rounded-xl pb-2 shadow-lg shadow-blue dark:shadow-pink border dark:border-dark w-6xl drop-shadow relative onload-animation bg-white dark:bg-dark"
+                    class="mt-12 w-full md:w-fit  lg:mx-auto rounded-xl pb-2 shadow-lg shadow-blue dark:shadow-pink border dark:border-dark w-6xl drop-shadow relative onload-animation bg-white dark:bg-dark"
             >
-                    <div
-                            class="pt-16 flex-col gap-6 h-full flex  flex-col justify-center items-center dark:color-white">
-                        <div class="flex gap-2 ">
-                            <div class="flex items-center gap-1">
-                                <div class="i-material-symbols:book-2-outline color-red"></div>
-                                {category}
-                            </div>
-                            {tags.map((tag) => (
-                                    <div class="flex items-center justify-center gap-1"
-                                    ><div class="i-material-symbols:tag color-gray"/>{tag}</div>
-                            ))}
+                <div
+                        class="pt-16 flex-col gap-6 h-full flex  flex-col justify-center items-center dark:color-white">
+                    <div class="flex gap-2 ">
+                        <div class="flex items-center gap-1">
+                            <div class="i-material-symbols:book-2-outline color-red"></div>
+                            {category}
                         </div>
-                        <h1
-                                class="text-4xl w-fit font-800 drop-shadow  bg-[linear-gradient(to_bottom_right,#FF61D2,#FE9090)] bg-clip-text text-transparent" >
-                            {title}
-                        </h1>
-                        <div class="flex items-center justify-center gap-2 drop-shadow dark:color-white">
-                            <div class='w-full whitespace-pre flex items-center'>
-                                <div class="i-material-symbols:calendar-today-outline whitespace-normal"></div>
-                                {new Date(pubDate).toLocaleString("zh-cn", {
-                                    year: "numeric",
-                                    month: "long",
-                                    day: "numeric",
-                                }).trim()}
-                            </div>
-                            <div class="flex w-full items-center justify-center whitespace-pre">
-                                <div class="i-mdi:text">
-                                </div>
-                                {
-                                    remarkPluginFrontmatter.readingTime
-                                        .words
-                                } 字
-                            </div>
-
-                            <div class="flex w-full items-center justify-center whitespace-pre">
-                                <div class="i-mdi:clock-outline"></div>
-                                {
-                                    remarkPluginFrontmatter.readingTime
-                                        .minutes
-                                } 分钟
-                            </div>
-
-
-                        </div>
-                        <div class="px-6 rounded-xl w-full">
-                            <img src={heroImage} class=" h-md object-cover w-full rounded-xl" />
-                        </div>
+                        {tags.map((tag) => (
+                                <div class="flex items-center justify-center gap-1"
+                                >
+                                    <div class="i-material-symbols:tag color-gray"/>
+                                    {tag}</div>
+                        ))}
                     </div>
+                    <h1
+                            class="text-4xl w-fit font-800 drop-shadow  bg-[linear-gradient(to_bottom_right,#FF61D2,#FE9090)] bg-clip-text text-transparent">
+                        {title}
+                    </h1>
+                    <div class="flex items-center justify-center gap-2 drop-shadow dark:color-white">
+                        <div class='w-full whitespace-pre flex items-center'>
+                            <div class="i-material-symbols:calendar-today-outline whitespace-normal"></div>
+                            {new Date(pubDate).toLocaleString("zh-cn", {
+                                year: "numeric",
+                                month: "long",
+                                day: "numeric",
+                            }).trim()}
+                        </div>
+                        <div class="flex w-full items-center justify-center whitespace-pre">
+                            <div class="i-mdi:text">
+                            </div>
+                            {
+                                remarkPluginFrontmatter.readingTime
+                                    .words
+                            } 字
+                        </div>
+
+                        <div class="flex w-full items-center justify-center whitespace-pre">
+                            <div class="i-mdi:clock-outline"></div>
+                            {
+                                remarkPluginFrontmatter.readingTime
+                                    .minutes
+                            } 分钟
+                        </div>
+
+
+                    </div>
+                    <div class="px-6 rounded-xl w-full">
+                        <img src={heroImage} class=" h-md object-cover w-full rounded-xl"/>
+                    </div>
+                </div>
                 <slot/>
 
             </article>
 
         </div>
-
-        <TableOfContents toc={headings}/>
     </div>
+    <TableOfContents toc={headings}/>
+</MainLayout>
 
-</main>
-<Footer/>
-</body>
-</html>
 <style lang="scss" is:global>
   .headings-underline {
     position: static;
